@@ -75,7 +75,7 @@ class MainPage(MainHandler):
         # user = User.register('admin', '123', 'admin@gmail.com', 'Kris', 'V')
         # user.put()
         if self.user:
-            self.render('base.html', username = self.user.name)
+            self.render('base.html', username = self.user)
         else:
             self.render('base.html')
 
