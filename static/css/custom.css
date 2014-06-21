@@ -10,6 +10,7 @@ body{
 
 #login-form-front > form > input{
 	border-radius: 5px;
+
 }
 
 li a:hover{
@@ -26,4 +27,5 @@ li a:hover{
 {
 	margin-top: 35px !important;
 }
+
 
