@@ -81,7 +81,7 @@ class MainPage(MainHandler):
             self.render('base.html')
 
     def post(self):
-	username = self.request.get('username').lower()
+        username = self.request.get('username').lower()
         password = self.request.get('password')
 
         u = User.login(username, password)
@@ -90,7 +90,7 @@ class MainPage(MainHandler):
             self.redirect('/')
         else:
             msg = 'Invalid username or password.'
-            self.render('index.html', error = msg)	
+            self.render('base.html', error = msg)	
 
 
 # user stuff
