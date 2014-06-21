@@ -93,6 +93,37 @@ class MainPage(MainHandler):
             self.render('base.html', error = msg)	
 
 
+from google.appengine.ext import db
+from google.appengine.api import users
+
+class Users(db.Model):
+    username = db.StringProperty(required = True)
+    pw_hash = db.StringProperty(required = True)
+    email = db.StringProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    updated = db.DateTimeProperty(auto_now=True)
+    first_name = db.StringProperty(required = True)
+    last_name = db.StringProperty(required = True)
+  
+
+class Games(db.Model):
+    game_title = db.StringProperty(required = True)
+
+class Dota_pts(db.Model):
+    total_points = db.IntegerProperty(required = False)
+    active_points = db.IntegerProperty(required = False)
+
+class Events(db.Model):
+    event_title = db.StringProperty(required = True)
+    max_teams = db.IntegerProperty(required = False)
+    max_players = db.IntegerProperty(required = False)
+    game_title = db.StringProperty(required = True)
+
+class Events_Join(db.Model):
+    players = db.StringListProperty()
+    teams = db.StringListProperty()
+    game = db.StringProperty(required = True)
+
 # user stuff
 def make_salt(length = 5):
     return ''.join(random.choice(letters) for x in xrange(length))
