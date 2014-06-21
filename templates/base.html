@@ -30,7 +30,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if username %}
-            {{username.first_name}} <a href="/logout"><button class="btn btn-success">Logout</button></a>
+            <span class="user_name">{{username.first_name}}</span> <a href="/logout"><button class="btn btn-success">Logout</button></a>
             {% else %}
             <li><a href="#">Join</a></li>
             <li id="login-button"><a href="#">Login</a></li>
