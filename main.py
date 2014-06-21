@@ -16,12 +16,14 @@ import jinja2
 from google.appengine.ext import db
 from HTMLParser import HTMLParser
 
-
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
+
+
 secret = 'ID,fmkf458FDHhfJIJ9j%^%hY77RRF76gb.2'
+
 
 def make_secure_val(val):
     return '%s|%s' % (val, hmac.new(secret, val).hexdigest())
@@ -67,15 +69,12 @@ class MainHandler(webapp2.RequestHandler):
         self.user = uid and User.by_id(int(uid))
 
 
-class MissingPage(MainHandler):
-  def get(self):
-    self.response.set_status(404)
-    self.response.write('Page has moved. Pls look at http://www.yyyyyy.yy to find the new location.')
-
 
 class MainPage(MainHandler):
     def get(self):
-	if self.user:
+        # user = User.register('admin', '123', 'admin@gmail.com', 'Kris', 'V')
+        # user.put()
+        if self.user:
             self.render('base.html', username = self.user.name)
         else:
             self.render('base.html')
@@ -90,39 +89,8 @@ class MainPage(MainHandler):
             self.redirect('/')
         else:
             msg = 'Invalid username or password.'
-            self.render('base.html', error = msg)	
+            self.render('base.html', error = msg)  
 
-
-from google.appengine.ext import db
-from google.appengine.api import users
-
-class Users(db.Model):
-    username = db.StringProperty(required = True)
-    pw_hash = db.StringProperty(required = True)
-    email = db.StringProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    updated = db.DateTimeProperty(auto_now=True)
-    first_name = db.StringProperty(required = True)
-    last_name = db.StringProperty(required = True)
-  
-
-class Games(db.Model):
-    game_title = db.StringProperty(required = True)
-
-class Dota_pts(db.Model):
-    total_points = db.IntegerProperty(required = False)
-    active_points = db.IntegerProperty(required = False)
-
-class Events(db.Model):
-    event_title = db.StringProperty(required = True)
-    max_teams = db.IntegerProperty(required = False)
-    max_players = db.IntegerProperty(required = False)
-    game_title = db.StringProperty(required = True)
-
-class Events_Join(db.Model):
-    players = db.StringListProperty()
-    teams = db.StringListProperty()
-    game = db.StringProperty(required = True)
 
 # user stuff
 def make_salt(length = 5):
@@ -141,29 +109,66 @@ def valid_pw(name, password, h):
 def users_key(group = 'default'):
     return db.Key.from_path('users', group)
 
+class User(db.Model):
+    name = db.StringProperty(required = True)
+    pw_hash = db.StringProperty(required = True)
+    email = db.StringProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    updated = db.DateTimeProperty(auto_now=True)
+    first_name = db.StringProperty(required = True)
+    last_name = db.StringProperty(required = True)
+  
+  
+    @classmethod
+    def by_id(cls, uid):
+        return User.get_by_id(uid, parent = users_key())
 
-class Login(MainHandler):
-    def get(self):
-        self.render('base.html')
+    @classmethod
+    def by_name(cls, name):
+        u = User.all().filter('name =', name).get()
+        return u
+    
+    @classmethod
+    def by_email(cls, email):
+        e = User.all().filter('email =', email).get()
+        return e
 
-    def post(self):
-        username = self.request.get('username').lower()
-        password = self.request.get('password')
+    @classmethod
+    def register(cls, name, pw, email = None, first_name = None, last_name = None):
+        pw_hash = make_pw_hash(name, pw)
+        return User(parent = users_key(),
+                    name = name,
+                    pw_hash = pw_hash,
+                    email = email,
+                    first_name = first_name,
+                    last_name = last_name,)
 
-        u = User.login(username, password)
-        if u:
-            self.login(u)
-            self.redirect('/news_page')
-        else:
-            msg = 'Invalid login. Please try again.'
-            self.render('base.html', error = msg)
+    @classmethod
+    def login(cls, name, pw):
+        u = cls.by_name(name)
+        if u and valid_pw(name, pw, u.pw_hash):
+            return u
+
+##Regular Expressions
+
+USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+def valid_username(username):
+    return username and USER_RE.match(username)
+
+PASSWORD_RE = re.compile(r"^.{3,20}$")
+def valid_password(password):
+    return password and PASSWORD_RE.match(password)
+
+EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
+def valid_email(email):
+    return email and EMAIL_RE.match(email)
 
 class Logout(MainHandler):
     def get(self):
         self.logout()
         self.redirect('/')
 
+            
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/logout', Logout),
-                               ('/login', Login)],
-                              debug=True)
+                               ('/logout', Logout),],
+                                debug=True)

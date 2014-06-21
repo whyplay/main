@@ -28,19 +28,24 @@
             <li><a href="#">Messages</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            {% if username %}
+            {{username}} <a href="/logout"><button class="btn btn-success">Logout</button></a>
+            {% else %}
             <li><a href="#">Join</a></li>
             <li id="login-button"><a href="#">Login</a></li>
             <li id="login-form-front" style="display: none;">
-                <form action="#">
+                <form method="POST">
                     <input type="text" name="username" placeholder="username...">
                     <input type="password" name="password" placeholde="password...">
+                    <input type="submit" value="Login">
                 </form></li>
+            {% endif %}
         </ul>
-    </div>
+    </div> 
 </nav>
 
-<main>
-    
+<main style="color: white;">
+
 </main>
 
     <!-- External Javascript Files -->
