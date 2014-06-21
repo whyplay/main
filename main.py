@@ -72,7 +72,7 @@ class MainHandler(webapp2.RequestHandler):
 
 class MainPage(MainHandler):
     def get(self):
-        # user = User.register('admin', '123', 'admin@gmail.com', 'Kris', 'V')
+        # user = User.register('admin', '123', 'admin@gmail.com', 'Manjot', 'S')
         # user.put()
         if self.user:
             self.render('base.html', username = self.user.name)
