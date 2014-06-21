@@ -68,6 +68,7 @@ table
 	font-family: sans-serif;
 	margin-top: 30px;
 	margin-bottom: 30px;
+	border: solid black 5px;
 }
 
 thead td
@@ -89,4 +90,9 @@ tbody
 tbody .news_content
 {
 	background-color: white;
+}
+
+tr td
+{
+	height: 50px;
 }
