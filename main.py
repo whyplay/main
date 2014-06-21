@@ -16,6 +16,7 @@ import jinja2
 from google.appengine.ext import db
 from HTMLParser import HTMLParser
 
+
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
@@ -66,15 +67,21 @@ class MainHandler(webapp2.RequestHandler):
         self.user = uid and User.by_id(int(uid))
 
 
+class MissingPage(MainHandler):
+  def get(self):
+    self.response.set_status(404)
+    self.response.write('Page has moved. Pls look at http://www.yyyyyy.yy to find the new location.')
+
+
 class MainPage(MainHandler):
     def get(self):
 	if self.user:
-            self.render('index.html', username = self.user.name)
+            self.render('base.html', username = self.user.name)
         else:
-            self.render('index.html')
+            self.render('base.html')
 
     def post(self):
-	username = self.request.get('username').lower()
+        username = self.request.get('username').lower()
         password = self.request.get('password')
 
         u = User.login(username, password)
@@ -83,7 +90,7 @@ class MainPage(MainHandler):
             self.redirect('/')
         else:
             msg = 'Invalid username or password.'
-            self.render('index.html', error = msg)	
+            self.render('base.html', error = msg)	
 
 
 # user stuff
@@ -103,161 +110,10 @@ def valid_pw(name, password, h):
 def users_key(group = 'default'):
     return db.Key.from_path('users', group)
 
-class User(db.Model):
-    name = db.StringProperty(required = True)
-    pw_hash = db.StringProperty(required = True)
-    email = db.StringProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    country = db.StringProperty(required = True)
-    month = db.StringProperty(required = True)
-    day = db.StringProperty(required = True)
-    year =db.StringProperty(required = True)
-  
-  
-    @classmethod
-    def by_id(cls, uid):
-        return User.get_by_id(uid, parent = users_key())
-
-    @classmethod
-    def by_name(cls, name):
-        u = User.all().filter('name =', name).get()
-        return u
-    
-    @classmethod
-    def by_email(cls, email):
-        e = User.all().filter('email =', email).get()
-        return e
-
-    @classmethod
-    def register(cls, name, pw, email = None, country = None, month = None, day = None, year = None):
-        pw_hash = make_pw_hash(name, pw)
-        return User(parent = users_key(),
-                    name = name,
-                    pw_hash = pw_hash,
-                    email = email,
-                    country = country,
-                    month = month,
-                    day = day,
-                    year = year)
-	
-
-    @classmethod
-    def login(cls, name, pw):
-        u = cls.by_name(name)
-        if u and valid_pw(name, pw, u.pw_hash):
-        	return u
-
-##Regular Expressions
-
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-def valid_username(username):
-    return username and USER_RE.match(username)
-
-PASSWORD_RE = re.compile(r"^.{3,20}$")
-def valid_password(password):
-    return password and PASSWORD_RE.match(password)
-
-EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
-def valid_email(email):
-    return email and EMAIL_RE.match(email)
-
-class SignUp(MainHandler):
-    def get(self):
-        self.render("register.html")
-
-    def post(self):
-        have_error = False
-        self.username = self.request.get('username')
-        self.password = self.request.get('password')
-        self.verify_password = self.request.get('verify_password')
-        self.email = self.request.get('email')
-        self.country = self.request.get('country')
-        self.month = self.request.get('month')
-        self.day = self.request.get('day')
-        self.year = self.request.get('year')
-        self.verify_email = self.request.get('verify_email')
-
-        params = dict(verify_email = self.verify_email, username = self.username, email = self.email,  verify_password = self.verify_password, country = self.country, month = self.month, day = self.day, year = self.year)
-
-        if not valid_username(self.username):
-            params['username_error'] = "Invalid username (or blank)."
-            have_error = True
-
-        if not valid_password(self.password):
-            params['password_error'] = "That wasn't a valid password."
-            have_error = True
-            
-        elif self.password != self.verify_password:
-            params['password_verify_error'] = "Your passwords didn't match."
-            have_error = True
-
-        if not self.country:
-            params['country_error'] = "Country required."
-            have_error = True
-
-        if not valid_email(self.email):
-            params['error_email'] = "That's not a valid email."
-            have_error = True
-
-        elif self.email != self.verify_email:
-            params['error_verify_email'] = "That's not a valid email."
-            have_error = True
-            
-        if not self.month:
-            params['error_birthday'] = "A birth day is required."
-            have_error = True
-            
-        if not self.day:
-            params['error_birthday'] = "A birth day is required."
-            have_error = True
-
-        if not self.year:
-            params['error_birthday'] = "A birth day is required."
-            have_error = True
-            
-        if have_error:
-            self.render('register.html', **params)
-        else:
-            self.done()
-
-    def done(self, *a, **kw):
-        raise NotImplementedError
-            
-
-class Register(SignUp):
-
-    def get(self):
-        if self.user:
-            self.redirect('/')
-        else:
-            self.render('register.html')
-    
-    def done(self):
-        #make sure the user doesn't already exist
-	e = User.by_email(self.email.lower())
-        u = User.by_name(self.username.lower())
-        if u and e:
-            msg = 'That user already exists.'
-            msg1 = 'That email is already in use.'
-            self.render('register.html', error_username = msg, error_email = msg1)
-        elif u:
-            msg = 'That user already exists.'
-            self.render('register.html', error_username = msg)
-        elif e:
-            msg1 = 'That email is already in use.'
-            self.render('register.html', error_email = msg1)
-        else:
-            u = User.register(self.username.lower(), self.password, self.email.lower(), self.country, self.month, self.day, self.year)
-            u.put()
-
-            self.login(u)
-            self.redirect('/')
-	
-        
 
 class Login(MainHandler):
     def get(self):
-        self.render('index.html')
+        self.render('base.html')
 
     def post(self):
         username = self.request.get('username').lower()
@@ -269,7 +125,7 @@ class Login(MainHandler):
             self.redirect('/news_page')
         else:
             msg = 'Invalid login. Please try again.'
-            self.render('index.html', error = msg)
+            self.render('base.html', error = msg)
 
 class Logout(MainHandler):
     def get(self):
@@ -278,6 +134,5 @@ class Logout(MainHandler):
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/logout', Logout),
-                               ('/register', Register),
                                ('/login', Login)],
                               debug=True)

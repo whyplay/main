@@ -1,0 +1,18 @@
+body{
+	
+	background-image: url('/img/dark1.png') ;
+
+}
+
+
+
+#login-form-front{
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+#login-form-front > form > input{
+	
+	border-radius: 5px;
+	
+}
