@@ -30,14 +30,14 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if username %}
-            <span class="user_name">{{username.first_name}}</span> <a href="/logout"><button class="btn btn-success">Logout</button></a>
+            <span class="user_name">{{username.first_name}} <a href="/logout"><button class="btn btn-success" style="background-color:green;">Logout</button></a></span>
             {% else %}
             <li><a href="#">Join</a></li>
             <li id="login-button"><a href="#">Login</a></li>
             <li id="login-form-front" style="display: none;">
                 <form method="POST">
                     <input type="text" name="username" placeholder="username...">
-                    <input type="password" name="password" placeholde="password...">
+                    <input type="password" name="password" placeholder="password...">
                     <input type="submit" value="Login">
                 </form></li>
             {% endif %}
@@ -47,15 +47,75 @@
 
 <main>
     <div class="container-fluid">
-        <div class="col-md-2">
-            <div class="row"></div>
+        <div class="col-md-3" style="padding-right:25px;">
+            <div class="row">
+                <h1 align="center">The News</h1>
+                <div class="news">
+                    <table class="table table-hover">
+                    <tbody class="news_content">
+                        <tr>
+                          <td>Jill</td>
+                        <tr>
+                          <td>Eve</td>
+                        </tr>
+                        <tr>
+                          <td>Jill</td>
+                        <tr>
+                          <td>Eve</td>
+                        </tr>
+                        <tr>
+                          <td>Jill</td>
+                        <tr>
+                          <td>Eve</td>
+                        </tr>
+                        <tr>
+                          <td>Jill</td>
+                        <tr>
+                          <td>Eve</td>
+                        </tr>
+                        <tr>
+                          <td>Jill</td>
+                        <tr>
+                          <td>Eve</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="col-md-9">
-            <div class="row"><button type="button" class="btn btn-info">Information</button></div>
-        </div>
+        <div class="col-md-9" style="padding-left:25px;">
+            <div class="row">
+                <h1>Global Leaderboard</h1>
+                <table class="table table-bordered" style="border-radius:4px;">
+                    <thead> 
+                        <tr>
+                            <td>Rank</td>
+                            <td>Username</td>
+                            <td>RP Points</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td>Jill</td>
+                          <td>Smith</td> 
+                          <td>50</td>
+                        </tr>
+                        <tr>
+                          <td>Eve</td>
+                          <td>Jackson</td> 
+                          <td>94</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
     </div>
 
 </main>
+
+<footer>
+    <div>
+    </div>
+</footer>
 
     <!-- External Javascript Files -->
     <script src="/static/js/custom.js"></script>
