@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link href='http://fonts.googleapis.com/css?family=Strait' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<nav role="navigation" class="navbar navbar-inverse navbar-default navbar-fixed" style="border-radius: 0px; box-shadow: 0px 2px 2px;">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a href="#" class="navbar-brand"><img src="/img/prototype_3.png" style="margin-top: -15px; height:80px; width:80px;"></a>
+    </div>
+    <!-- Collection of nav links and other content for toggling -->
+    <div id="navbarCollapse" class="collapse navbar-collapse" style="font-family: 'Strait', sans-serif;">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Messages</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if username %}
+            <span class="user_name">{{username.first_name}}</span> <a href="/logout"><button class="btn btn-success">Logout</button></a>
+            {% else %}
+            <li><a href="#">Join</a></li>
+            <li id="login-button"><a href="#">Login</a></li>
+            <li id="login-form-front" style="display: none;">
+                <form method="POST">
+                    <input type="text" name="username" placeholder="username...">
+                    <input type="password" name="password" placeholde="password...">
+                    <input type="submit" value="Login">
+                </form></li>
+            {% endif %}
+        </ul>
+    </div> 
+</nav>
+
+<main>
+    <div class="container-fluid">
+        <div class="col-md-2">
+            
+        </div>
+        <div class="col-md-9">
+    
+        <style>
+        .block{
+            height: 50px;
+            width: 150px;
+            background: white;
+            margin-bottom: 50px;
+            background: #444444;
+        }
+
+        .innerblockdown{
+            height: 24px;
+            width: 150px;
+            margin-bottom: 2px;
+            background: #888888;
+        }
+
+        .innerblockup{
+            height: 24px;
+            width: 150px;
+            margin-bottom: 2px;
+            background: #888888;
+        }
+
+        .offset{
+            margin-left: 300px;
+            margin-top: 25px;
+            background: #444444;
+
+        }
+        .get-result{
+            position: absolute;
+            left: 170px;
+        }
+        </style>
+    
+            <div class="block">
+                <button id="get-result-button" class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockdown"></div>
+                <div class="innerblockdown"></div>
+            </div>
+            <div class="block offset"></div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockup"></div>
+                <div class="innerblockup"></div>
+            </div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockdown"></div>
+                <div class="innerblockdown"></div>
+            </div>
+            <div class="block offset"></div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockup"></div>
+                <div class="innerblockup"></div>
+            </div>
+
+             <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockdown"></div>
+                <div class="innerblockdown"></div>
+            </div>
+            <div class="block offset"></div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockup"></div>
+                <div class="innerblockup"></div>
+            </div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockdown"></div>
+                <div class="innerblockdown"></div>
+            </div>
+            <div class="block offset"></div>
+
+            <div class="block">
+                <button class="get-result btn btn-warning">Get Result</button>
+                <div class="innerblockup"></div>
+                <div class="innerblockup"></div>
+            </div>
+        
+
+
+        </div>
+    </div>
+
+</main>
+
+    <!-- External Javascript Files -->
+    <script src="/static/js/custom.js"></script>
+</body>
+</html>

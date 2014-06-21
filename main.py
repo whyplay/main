@@ -38,6 +38,7 @@ def render_str(template, **params):
     return t.render(params)
 
 class MainHandler(webapp2.RequestHandler):
+
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -72,7 +73,7 @@ class MainHandler(webapp2.RequestHandler):
 
 class MainPage(MainHandler):
     def get(self):
-        # user = User.register('admin', '123', 'admin@gmail.com', 'Manjot', 'S')
+        # user = User.register('manjot', '123', 'admin@gmail.com', 'Manjot', 'S')
         # user.put()
         if self.user:
             self.render('base.html', username = self.user)
@@ -149,6 +150,15 @@ class User(db.Model):
         if u and valid_pw(name, pw, u.pw_hash):
             return u
 
+class All_Events(db.Model):
+    title = db.StringProperty()
+    game = db.StringProperty()
+    players = db.StringProperty()
+
+class Games(db.Model):
+    game_title = db.StringProperty(required = True)
+    slug = db.StringProperty(required = True)
+
 ##Regular Expressions
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -168,7 +178,47 @@ class Logout(MainHandler):
         self.logout()
         self.redirect('/')
 
-            
+class Profile(MainHandler):
+    def get(self, profile_id):
+        if self.user:
+            profile_user = User.by_name(profile_id)
+            return self.render('profile.html', username = self.user, profile_user = profile_user)
+        else:
+            self.redirect('/')
+
+class Event(MainHandler):
+    def get(self, event_id):
+        if self.user:
+            event = User.by_name(event_id)
+            return self.render('event.html', username = self.user, event = event)
+        else:
+            self.redirect('/')  
+
+class Create_Event(MainHandler):
+    def get(self):
+        games = Games.all()
+        return self.render('create_event.html', username = self.user, games = games)
+
+    def post(self):
+        all_events = All_Events()
+        all_events.title = self.request.get("event_title")
+        all_events.game = self.request.get("game_title")
+        all_events.players = self.request.get("player_count")
+        all_events.put()
+        self.redirect('/events')
+
+class Events(MainHandler):
+    def get(self):
+        if self.user:
+            events = All_Events.all()
+            return self.render('events.html', username = self.user, events = events)
+        else:
+            self.redirect('/') 
+
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/logout', Logout),],
+                               ('/logout', Logout),
+                               ('/profile/(.*)', Profile),
+                               ('/event/(.*)', Event),
+                               ('/create_event', Create_Event),
+                               ('/events', Events)],
                                 debug=True)
